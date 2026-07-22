@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
   res.json(scripts);
 });
 
-// GET /script?id=SCRIPT_ID - chi tiết một script
+// GET /script?id=SCRIPT_ID - chi tiết script
 router.get('/script', (req, res) => {
   const { id } = req.query;
   if (!id || typeof id !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(id)) {
@@ -51,7 +51,6 @@ router.post('/create', (req, res) => {
   const ip = req.ip;
   const userAgent = req.get('User-Agent') || '';
 
-  // Validation
   if (!id || !name || !script) {
     logger.logRequest(requestId, ip, userAgent, id, 'CREATE_MISSING_FIELDS');
     return res.status(400).json({ error: 'Missing required fields: id, name, script' });
