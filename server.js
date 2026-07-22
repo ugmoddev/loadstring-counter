@@ -18,11 +18,11 @@ const PORT = process.env.PORT || 3000;
 // Middleware bảo mật và tiện ích
 app.use(helmet());
 app.use(cors());
-app.use(express.json()); // để parse JSON body
+app.use(express.json());
 
 // Rate limiting toàn cục: 100 request mỗi phút cho mỗi IP
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 phút
+  windowMs: 60 * 1000,
   max: 100,
   message: 'Quá nhiều request, vui lòng thử lại sau.',
   standardHeaders: true,
@@ -30,18 +30,21 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Middleware gán request ID cho logging
+// Gán request ID cho logging
 app.use((req, res, next) => {
   req.requestId = uuidv4();
   next();
 });
 
-// Logger ghi lại mọi request (tùy chọn, chỉ ghi các route quan trọng)
+// (Tuỳ chọn) Log mọi request
 app.use((req, res, next) => {
-  // Ghi log mọi request, nhưng ta sẽ ghi chi tiết trong từng route
-  // để có thêm thông tin như script ID
   next();
 });
+
+// Debug: kiểm tra kiểu của từng route (sẽ hiện trên log Render)
+console.log('loadRoute type:', typeof loadRoute);
+console.log('statsRoute type:', typeof statsRoute);
+console.log('scriptsRoute type:', typeof scriptsRoute);
 
 // Routes
 app.use('/load', loadRoute);
@@ -56,9 +59,7 @@ app.use((req, res) => {
 // Khởi động server
 app.listen(PORT, () => {
   console.log(`Loadstring Counter server running on port ${PORT}`);
-  // Tải dữ liệu từ database.json vào RAM
   db.loadDatabase();
-  // Đồng bộ xuống file theo chu kỳ (mỗi 10 giây)
   setInterval(() => {
     db.saveDatabase();
   }, 10000);
