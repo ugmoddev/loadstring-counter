@@ -1,0 +1,1 @@
+print("Trigon v3")
