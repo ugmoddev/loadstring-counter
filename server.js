@@ -56,6 +56,19 @@ app.use((req, res) => {
   res.status(404).type('text/plain').send('Not Found');
 });
 
+// Thêm endpoint /script để lấy chi tiết script
+app.get('/script', (req, res) => {
+  const { id } = req.query;
+  if (!id || typeof id !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(id)) {
+    return res.status(400).json({ error: 'Invalid Script ID' });
+  }
+  const detail = db.getScriptDetail(id);
+  if (!detail) {
+    return res.status(404).json({ error: 'Script not found' });
+  }
+  res.json(detail);
+});
+
 // Khởi động server
 app.listen(PORT, () => {
   console.log(`Loadstring Counter server running on port ${PORT}`);
