@@ -1,1 +1,0 @@
-print("Trigon v3")
